@@ -1,0 +1,3 @@
+https://github.com/Bogdanp/awesome-advent-of-code#r
+https://github.com/mpjdem/adventofcode2019
+https://github.com/riinuots/advent2019

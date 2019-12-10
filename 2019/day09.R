@@ -25,6 +25,7 @@ write_mem_val <- function(vals, argument, write_value, memory){
     vals[as.integer(argument)] <- write_value
   } else{
     memory_match_id <- which(memory[, 1] == as.vector(argument))
+    # cat("argument:", as.integer(argument), "\n")
     if(length(memory_match_id) > 0){
       memory[memory_match_id, 2] <- write_value
     } else{
@@ -95,13 +96,12 @@ intcode <- function(vals, input_value, instr_point=1, input_id=1, rel_base=0){
     read_val <- vals[as.integer(instr_point)]
     opcode <- read_val %% 100
     # cat(vals, "\n")
-    cat(as.integer(instr_point), as.integer(opcode), as.integer(rel_base),
-        as.integer(read_val), "\n")
+    
     # cat(as.integer(vals[instr_point:(instr_point+4)]), "\n")
     if(opcode == 99){
-      browser()
+      # browser()
       return (list(output_val=NA, vals=vals, instr_point=instr_point,
-                   halted=TRUE))
+                   halted=TRUE, last_output_val=output_val))
     } else if(opcode == 1 || opcode == 2){
       next1 <- read(vals, instr_point + 1, read_val, 2, rel_base, memory)
       next2 <- read(vals, instr_point + 2, read_val, 3, rel_base, memory)
@@ -144,9 +144,7 @@ intcode <- function(vals, input_value, instr_point=1, input_id=1, rel_base=0){
       # third <- read(vals, instr_point + 3, read_val, 4, rel_base, memory,
       #               debug=(instr_point==5))
       if(read_val %/% 10000 == 2){
-        third <- read_mem_val(
-          vals, as.integer(vals[as.integer(instr_point + 3)] + rel_base),
-          memory)
+        third <- vals[as.integer(instr_point + 3)] + rel_base
       } else{
         third <- vals[as.integer(instr_point + 3)]
       }
@@ -155,14 +153,14 @@ intcode <- function(vals, input_value, instr_point=1, input_id=1, rel_base=0){
       write_vals <- write(vals, condition, third, read_val, 4, rel_base, memory,
                           overwrite_imm_mode=TRUE)
       vals <- write_vals$vals
-      if(instr_point==500){
-        browser()
-        vals[500] <- 0
-      }
-      if(instr_point==816){
-        browser()
-        vals[816] <- 0
-      }
+      # if(instr_point==500){
+      #   browser()
+        # vals[500] <- 0
+      # }
+      # if(instr_point==816){
+      #   browser()
+        # vals[816] <- 0
+      # }
       memory <- write_vals$memory
       instr_point <- instr_point + 4
     } else if(opcode == 9){
@@ -178,60 +176,5 @@ intcode <- function(vals, input_value, instr_point=1, input_id=1, rel_base=0){
 
 # cat(intcode(c(109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99), NA)$vals)
 # cat(intcode(c(1102,34915192,34915192,7,4,7,99,0), NA)$output_val)
-cat("Part 1:", intcode(vals, 1)$output_val)
-
-# perms <- permn(1:5)
-# num_perms <- length(perms)
-# max_signal_1 <- 0
-# # for(i in 1:num_perms){
-# #   cat(i, ":")
-# #   input2 <- 0
-# #   for(step in 1:5){
-# #     input1 <- perms[[i]][step]-1
-# #     output <- intcode(vals, c(input1, input2))
-# #     input2 <- output 
-# #   }
-# #   cat(output, "\n")
-# #   if(output > max_signal_1){
-# #     max_signal_1 <- output
-# #   }
-# # }
-# 
-# # vals <- c(3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26, 27,4,27,1001,28,-1,28,
-# #           1005,28,6,99,0,0,5)
-# max_signal_2 <- 0
-# for(i in 1:num_perms){
-#   cat(i, ":")
-#   input2 <- 0
-#   halted <- FALSE
-#   all_states <- rep(list(list(vals=vals, instr_point=1)), 5)
-#   first_loop <- TRUE
-#   while(!halted){
-#     for(step in 1:5){
-#       if(i == 17){
-#         browser()
-#       }
-#       step_inputs <- input2
-#       if(first_loop){
-#          step_inputs <- c(perms[[i]][step]+4, step_inputs)
-#       }
-#       all_outputs <- intcode(all_states[[step]]$vals, step_inputs,
-#                              all_states[[step]]$instr_point)
-#       all_states[[step]] <- all_outputs
-#       prev_output <- all_outputs$output_val
-#       input2 <- prev_output
-#     }
-#     first_loop <- FALSE
-#     halted <- all_outputs$halted
-#     if(!halted){
-#       last_output <- all_outputs$output
-#     }
-#   }
-#   cat(last_output, "\n")
-#   if(last_output > max_signal_2){
-#     max_signal_2 <- last_output
-#   }
-# }
-# 
-# cat("Part 1:", max_signal_1, "\n")
-# cat("Part 2:", max_signal_2, "\n")
+cat("Part 1:", as.character(intcode(vals, 1)$last_output_val))
+cat("Part 2:", as.character(intcode(vals, 2)$last_output_val))
