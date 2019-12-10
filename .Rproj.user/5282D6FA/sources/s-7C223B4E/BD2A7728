@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1575871360877.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "BD2A7728",
+    "lastKnownWriteTime" : 1575919003,
+    "last_content_update" : 1575919003627,
+    "path" : "~/Documents/Advent of code/2019/day09.R",
+    "project_path" : "2019/day09.R",
+    "properties" : {
+        "cursorPosition" : "157,27",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

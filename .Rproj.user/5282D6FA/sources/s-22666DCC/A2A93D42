@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1575959560569.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "A2A93D42",
+    "lastKnownWriteTime" : 1575959549,
+    "last_content_update" : 1575959560569,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "672F4643",
+        "caption" : "digits",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=digits&cache_key=672F4643",
+        "displayedObservations" : "34",
+        "environment" : "",
+        "expression" : "digits",
+        "object" : "digits",
+        "preview" : "0",
+        "totalObservations" : "34",
+        "variables" : "34"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
