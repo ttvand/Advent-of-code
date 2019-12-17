@@ -60,7 +60,6 @@ run_intcode_step <- function(state, inputs = numeric(0)) {
     }
     
     set_val <- function(parn, val) {
-      browser()
       if (parmodes[parn] == 0) {
         write_mmry(params[parn], val)
       } else if (parmodes[parn] == 2) {
