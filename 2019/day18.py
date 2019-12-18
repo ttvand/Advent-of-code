@@ -1,12 +1,12 @@
 import numpy as np
 
+# filename = 'input18_2.txt'
 filename = 'input18.txt'
 with open(filename) as f:
   input_vals = np.array([[ord(e) for e in s.strip()] for s in f.readlines()])
 with open(filename) as f:
   input_map = np.array([list(s.strip()) for s in f.readlines()])
 
-map_dim = input_map.shape[0]
 current_pos = tuple([c[0] for c in np.where(input_map == "@")])
 keys = np.sort(np.unique(input_map.flatten()[
     np.logical_and(97 <= input_vals.flatten(), input_vals.flatten() <= 122)]))
@@ -24,21 +24,21 @@ def get_path_to_keys(pos, keys, grid):
     while search_stack:
         search_pos = search_stack.pop()
         dist_to_start = shortest_paths[search_pos][1]
-        print(search_pos)
         for pos_dir in pos_dirs:
             next_pos = (search_pos[0] + pos_dir[0], search_pos[1] + pos_dir[1])
             if grid[next_pos[0], next_pos[1]] != '#':
+                add_shortest_path = False
                 if next_pos in shortest_paths:
                     next_distance = shortest_paths[next_pos][1]
-                    if dist_to_start + 1 < next_distance:
-                        import pdb; pdb.set_trace()
-                        x=1
+                    add_shortest_path = dist_to_start + 1 < next_distance
                 else:
+                    add_shortest_path = True
+                if add_shortest_path:
                     shortest_paths[next_pos] = (search_pos, dist_to_start + 1)
                     search_stack.append(next_pos)
                     
     paths = [pos] * num_keys
-    keys_and_doors = [''] * num_keys
+    path_details = [''] * num_keys
     for (i, k) in enumerate(keys):
         key_pos = tuple([c[0] for c in np.where(input_map == k)])
         steps = [key_pos]
@@ -55,13 +55,60 @@ def get_path_to_keys(pos, keys, grid):
         doors_on_path = [s for s in path_encodings if 65 <= ord(s) <= 90]
             
         paths[i] = steps
-        keys_and_doors[i] = (''.join(np.sort(keys_on_path)),
-                             ''.join(np.sort(doors_on_path)))
+        path_details[i] = (''.join(keys_on_path),
+                           ''.join(np.sort(doors_on_path)),
+                           len(path_encodings)-1)
         
     
-    import pdb; pdb.set_trace()
-    x=1
+    return path_details
             
   
-doors_on_pathcurrent_to_keys = get_path_to_keys(current_pos, keys, input_map)
-  
+start_paths = get_path_to_keys(current_pos, keys, input_map)
+shortest_key_paths = []
+for (i, k) in enumerate(keys):
+    key_pos = tuple([c[0] for c in np.where(input_map == k)])
+    shortest_key_paths.append((str(k), get_path_to_keys(key_pos, keys, input_map)))
+    
+key_paths = []
+for (k, d, l) in start_paths:
+    if not d and len(k) == 1:
+        key_paths.append(([k], l))
+        
+for i in range(len(keys)-1):
+    # print(i, len(key_paths))
+    next_key_paths = []
+    for (k, l) in key_paths:
+        match_key_id = np.where(keys == k[-1])[0][0]
+        shortest_paths = shortest_key_paths[match_key_id][1]
+        for (cons_key_id, cons_k) in enumerate(keys):
+            new_keys = set(shortest_paths[cons_key_id][0]) - set(k)
+            if not cons_k in k and len(new_keys) == 1:
+                # Make sure no doors are obstructing the passage
+                doors = shortest_paths[cons_key_id][1].lower()
+                if not set(doors) - set(k):
+                    path_len = shortest_paths[cons_key_id][2]
+                    next_key_paths.append((k + [cons_k[-1]], l+path_len))
+                    
+    # Prune the paths - only keep the set with the lowest combined value
+    # Caveat: only prune when the last key is identical!
+    keep_next_paths = [True] * len(next_key_paths)
+    path_distances = {}
+    for (keep_id, (collected_keys, current_dist)) in enumerate(next_key_paths):
+        original_keys = collected_keys.copy()
+        prev_collected =  collected_keys[:-1].copy()
+        prev_collected.sort()
+        tuple_path = tuple(prev_collected + [collected_keys[-1]])
+        if tuple_path in path_distances:
+            (best_path_dist, best_path, prev_id) = path_distances[tuple_path]
+            if current_dist < best_path_dist:
+                path_distances[tuple_path] = (current_dist, original_keys, keep_id)
+                keep_next_paths[prev_id] = False
+            else:
+                keep_next_paths[keep_id] = False
+        else:
+            path_distances[tuple_path] = (current_dist, original_keys, keep_id)
+    
+    next_key_paths = [p for (p, k) in zip(next_key_paths, keep_next_paths) if k]
+    key_paths = next_key_paths
+
+print("Part 1: {}".format(np.array([l for (_, l) in key_paths]).min()))
