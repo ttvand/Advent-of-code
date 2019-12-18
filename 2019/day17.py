@@ -73,7 +73,7 @@ while True:
 # Eyeball repeating patterns in the path
 all_actions = np.reshape(np.array(actions), [-1, 2])
 patterns = {'A': [0, 3], 'B': [3, 7], 'C': [10, 14]}
-main_routine = ['A', 'B', 'A', 'C', 'B', 'A', 'C']
+main_routine = ['A', 'B', 'A', 'C', 'B', 'A', 'C', 'B', 'A', 'C']
 
 # Wake the vacuum robot up
 memory2 = memory.copy()
