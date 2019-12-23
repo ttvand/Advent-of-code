@@ -114,7 +114,6 @@ def part2_take2(parsed, deck_size, num_shuffles, final_pos):
       
   # Define the update matrix of step_size and start_id
   update_m = np.array([[step_size, 0], [start_id, 1]], dtype=np.int64)
-  original_update_m = update_m
   
   # Elevate the matrix to the requested number of shuffles
   shuffle_boolean = list("{0:064b}".format(num_shuffles))
