@@ -52,7 +52,7 @@ step_counter = 0
 visited = [start_pos]
 exit_search = False
 while not exit_search:
-    print(step_counter, len(considered_pos), considered_pos)
+#    print(step_counter, len(considered_pos), considered_pos)
     step_counter += 1
     next_considered_pos = []
     for pos in considered_pos:
@@ -85,7 +85,7 @@ exit_search = False
 max_depth = 50 # Heuristic to speed up search - increase if no solutions are found
 while not exit_search:
     # print(step_counter, len(considered_pos), considered_pos)
-    print(step_counter, len(considered_pos))
+#    print(step_counter, len(considered_pos))
     step_counter += 1
     next_considered_pos = []
     for pos_depth in considered_pos:
