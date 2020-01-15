@@ -28,19 +28,13 @@ def get_fft(input_vals, steps, base_pattern):
   return digits.astype(np.int)
 
 def get_fft_fixed_base(input_string):
-  offset = int(input_string[:7], 10)
+  offset = int(input_string[:7])
   input_list = np.array(list(map(int, input_string)) * 10000)
-  input_length = len(input_list)
   
   for i in range(100):
-    revsums = np.flip(np.cumsum(np.flip(input_list[offset:input_length])))
-    input_list[offset:input_length] = np.mod(np.abs(revsums), 10).astype(np.int)
-#    partial_sum = input_list[offset:input_length].sum()
-#    for j in range(offset, input_length):
-#      t = partial_sum
-#      partial_sum -= input_list[j]
-#      input_list[j] = t % 10 if t > 0 else -t % 10
-  
+    revsums = np.flip(np.cumsum(np.flip(input_list[offset:])))
+    input_list[offset:] = np.mod(np.abs(revsums), 10)
+    
   return input_list[offset: offset+8]
     
 res_1 = get_fft(input_vals, 100, base_pattern)
