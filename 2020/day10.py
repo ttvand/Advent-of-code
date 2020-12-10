@@ -9,7 +9,6 @@ with open(filename) as f:
 assert data.size == np.unique(data).size
 sd = np.sort(data)
 sda = np.array([0] + sd.tolist() + [sd[-1]+3])
-num_numbers = sda.size
 sdad = np.diff(sda)
 print((sdad==1).sum()*(sdad==3).sum())
 
