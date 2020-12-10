@@ -1,17 +1,13 @@
 import numpy as np
 
-filename = '../../Downloads/input10.txt'
-# filename = '../../Downloads/input10-2.txt'
+filename = 'input10.txt'
+# filename = 'input10-2.txt'
 
 with open(filename) as f:
   data = np.array([int(s) for s in f.readlines()])
 
 assert data.size == np.unique(data).size
 sd = np.sort(data)
-
-one_diff_count = 0
-three_diff_count = 0
-
 sda = np.array([0] + sd.tolist() + [sd[-1]+3])
 num_numbers = sda.size
 sdad = np.diff(sda)
