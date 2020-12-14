@@ -40,10 +40,10 @@ num_writes = len(mask_val_writes)
 have_conflicts = np.zeros((num_writes, num_writes), dtype=np.bool)
 for i in range(num_writes-1):
   for j in range(i+1, num_writes):
-    count = ~np.any(np.array([(a == '1' and b == '0') or (
+    has_conflict = ~np.any(np.array([(a == '1' and b == '0') or (
       a == '0' and b == '1') for (a, b) in zip(
         mask_val_writes[i][0], mask_val_writes[j][0])]))
-    have_conflicts[i, j] = count
+    have_conflicts[i, j] = has_conflict
        
 total_count = 0
 for i in range(num_writes):
