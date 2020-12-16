@@ -36,9 +36,6 @@ others_valid = np.stack(
   [o for o in other_tickets if np.all(valid_ranges[o.flatten()])])
 input_keys = list(inputs.keys())
 num_keys = len(input_keys)
-valid_ranges = np.zeros((all_input_ranges.max()+1, num_keys), dtype=np.bool)
-for i in range(num_keys):
-  valid_ranges[others_valid[:, i], i] = True
   
 # Row: True index
 # Col: ticket index
