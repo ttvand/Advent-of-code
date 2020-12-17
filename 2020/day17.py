@@ -12,14 +12,12 @@ def conway(dim):
   k = np.ones(tuple([3]*dim))
   k[tuple([1]*dim)] = 0
   nr = data.shape[0]
-  sr1 = nr*2
-  sr2 = nr
   
   inputs = np.zeros(tuple([nr*4]*2+[nr*2 for _ in range(dim-2)])).astype(bool)
   if dim == 3:
-    inputs[sr1:sr1+data.shape[0], sr1:sr1+data.shape[1], sr2] = data
+    inputs[nr*2:nr*2+data.shape[0], nr*2:nr*2+data.shape[1], nr] = data
   else:
-    inputs[sr1:sr1+data.shape[0], sr1:sr1+data.shape[1], sr2, sr2] = data
+    inputs[nr*2:nr*2+data.shape[0], nr*2:nr*2+data.shape[1], nr, nr] = data
     
   for _ in range(6):
     neighbor_count = convolve(inputs.astype(np.int), k, mode='constant')
@@ -27,4 +25,5 @@ def conway(dim):
     
   print(inputs.sum())
   
-conway(3); conway(4)
+conway(3)
+conway(4)
