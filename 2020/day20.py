@@ -53,28 +53,81 @@ for i in range(num_tiles-1):
 corner_pieces = np.where(aligns.sum((1, 2)) == 2)[0]
 print(np.prod(np.array([tile_mappings[p] for p in corner_pieces])))
       
-# Part 2: compose the puzzle
-...
 
-# # Pick a tile with 4 matches (a non edge piece) and then then connect pieces to 
-# # a random tile that can still be connected with other pieces
-# central_pieces = np.where(aligns.sum((1, 2)) == 4)[0]
-# first_piece = central_pieces[0]
-# pieces = {first_piece: 0}
-# assigned = np.zeros(num_tiles, dtype=np.bool)
-# assigned[first_piece] = True
-# while not np.all(assigned):
-#   assigned_ids = np.where(assigned)[0]
-#   match_current = aligns[:, assigned].sum(-1).flatten()*(~assigned)
+def get_transformations(tile):
+  trans = []
+  for f in [False, True]:
+    if f:
+      tile = np.flip(tile, 1)
+    for i in range(4):
+      trans.append(tile)
+      tile = np.rot90(tile)
   
-#   # Decide on the orientation and rotation of the assigned piece
-#   assign_id = np.where(match_current)[0][0]
-#   constraints = np.where(aligns[assign_id, assigned])
-#   for i in range(constraints[0].size):
-#     other_id = assigned_ids[constraints[0][i]]
-#     other_rel_orientation = constraints[1][i]
-#     other_orientation = pieces[other_id]
-#     import pdb; pdb.set_trace()
-#     x=1
+  return trans
+
+def connect(i, j, grid):
+  if j == 0:
+    tile, trans, tile_id = grid[i-1][j]
+    order = 'up'
+    ref_border = trans[-1] 
+  else:
+    tile, trans, tile_id = grid[i][j-1]
+    order = 'left'
+    ref_border = trans[:, -1] 
   
-#   assigned[assign_id] = True
+  tiles_in_use = np.array([g[2] for r in grid for g in r if g is not None])
+  considered_new = np.setdiff1d(
+    np.where(aligns[tile_id].sum(-1) > 0)[0], np.array(tiles_in_use))
+  
+  for n in considered_new:
+    for t in all_trans[n]:
+      new_border = t[0] if order == 'up' else t[:, 0]
+      
+      if np.all(new_border == ref_border):
+        grid[i][j] = (tiles[n], t, n)
+        return True
+      
+  return False
+
+all_trans = [get_transformations(t) for t in tiles]
+
+# Part 2: compose the puzzle: start in the top left and go right - down.
+# Try all possible transformations for the first corner 
+first_corner_piece = corner_pieces[0]
+for t in all_trans[first_corner_piece]:
+  grid = [[None for _ in range(image_dim)] for _ in range(image_dim)]
+  grid[0][0] = (all_trans[first_corner_piece][0], t, first_corner_piece)
+  success = True
+  for i in range(image_dim):
+    for j in range(image_dim):
+      if grid[i][j] is None:
+        can_connect = connect(i, j, grid)
+        if not can_connect:
+          success = False
+          break
+    if not success:
+      break
+        
+  if success:
+    break
+  
+puzzle = np.concatenate([np.concatenate(
+  [t[1:-1, 1:-1] for _, t, _ in r], 1) for r in grid], 0)
+
+sea_monster = """                  # 
+#    ##    ##    ###
+ #  #  #  #  #  #   """
+sea_p = np.array([[c == '#' for c in row] for row in sea_monster.split('\n')])
+for pt in get_transformations(puzzle):
+  pattern_match = np.zeros_like(pt)
+  any_match = False
+  for i in range(puzzle.shape[0]-sea_p.shape[0]+1):
+    for j in range(puzzle.shape[1]-sea_p.shape[1]+1):
+      match = np.all(pt[i:i+sea_p.shape[0], j:j+sea_p.shape[1]][sea_p])
+      if match:
+        any_match = True
+        pattern_match[i:i+sea_p.shape[0], j:j+sea_p.shape[1]][sea_p] = True
+        
+  if any_match:
+    print((pt & ~pattern_match).sum())
+    break
