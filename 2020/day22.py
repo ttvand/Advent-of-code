@@ -37,7 +37,7 @@ def rec_combat(p1, p2, hist, games):
     f, s = p1.pop(0), p2.pop(0)
     
     if len(p1) >= f and len(p2) >= s:
-      first_winner = rec_combat(copy.copy(p1[:f]), copy.copy(p2[:s]), [],
+      first_winner = rec_combat(copy.copy(p1[:f]), copy.copy(p2[:s]), {},
                                 games)[0]
       games[(tuple(p1), tuple(p2))] = first_winner
       if first_winner:
@@ -57,7 +57,7 @@ def rec_combat(p1, p2, hist, games):
     state = (tuple(p1), tuple(p2))
     if state in hist:
       return True, p1, p2
-    hist.append(state)
+    hist[state] = True
     
   first_win = len(p1) > 0
   if first_win:
@@ -67,5 +67,5 @@ def rec_combat(p1, p2, hist, games):
   
 p1 = [int(d) for d in data[1:1+num_cards]]
 p2 = [int(d) for d in data[num_cards+3:num_cards*2+3]]
-winner, pw, pl = rec_combat(p1, p2, [], {})
+winner, pw, pl = rec_combat(p1, p2, {}, {})
 print((np.flip(1+np.arange(num_cards*2))*np.array(pw)).sum())
