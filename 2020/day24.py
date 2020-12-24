@@ -61,7 +61,7 @@ for i in range(num_days_2):
       else:
         neighbors[n] = 1
         
-  # B -> W transitions: not 1 B neighbor
+  # B -> W transitions: not 1 or 2 B neighbors
   just_flipped = set()
   for b in list(blacks):
     if not b in neighbors or not neighbors[b] in [1, 2]:
